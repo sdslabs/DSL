@@ -9,6 +9,8 @@ import Cocoa
 
 class ViewController: NSViewController {
 
+    @IBOutlet weak var ipAddressField: NSTextField!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 

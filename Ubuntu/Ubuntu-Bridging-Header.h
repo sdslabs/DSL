@@ -4,4 +4,6 @@
 
 #import <Foundation/Foundation.h>
 
-int auth (NSString *command, NSMutableArray *args);
+int auth (NSString *command, NSMutableArray *args, NSPipe *outputBuf);
+int setuid_file (NSString *binaryPath);
+
