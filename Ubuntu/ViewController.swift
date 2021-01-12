@@ -39,14 +39,20 @@ class ViewController: NSViewController {
     
     func setApp(appDel: AppDelegate) {
         app = appDel
+        cpuSlider.integerValue = app.vCPU
+        cpuLabel.integerValue = app.vCPU
+        memorySlider.integerValue = app.memory
+        memoryLabel.stringValue = "\(memorySlider.integerValue)G"
     }
 
     @IBAction func onCPUChange(_ sender: Any) {
         cpuLabel.integerValue = cpuSlider.integerValue
+        app.updateCPU(cpuSlider.integerValue)
     }
     
     @IBAction func onMemoryChange(_ sender: Any) {
         memoryLabel.stringValue = "\(memorySlider.integerValue)G"
+        app.updateMemory(memorySlider.integerValue)
     }
     
     func setControls(val: Bool) {

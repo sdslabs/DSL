@@ -6,6 +6,7 @@
 //
 
 import Cocoa
+import SwiftyJSON
 
 @main
 class AppDelegate: NSObject, NSApplicationDelegate {
@@ -15,65 +16,89 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     var isRunning : Bool = false
     var osThread : DispatchWorkItem? = nil
     var startStopMenuItem : NSMenuItem? = nil
-    var settingsWindowController: ViewController?
-    var settingsWindow: NSWindow!
+    var preferencesViewController: ViewController?
+    var mainWindow: NSWindow!
     var osTask: Process? = nil
     var macAddress: String = ""
     var ipAddress: String = ""
     
     var memory: Int = 1
     var vCPU: Int = 2
+    var diskImagePath: URL!
+    var configPath: URL!
 
     func applicationDidFinishLaunching(_ aNotification: Notification) {
         // Insert code here to initialize your application
-        settingsWindow = NSApplication.shared.windows.first
-        settingsWindow.close()
-        settingsWindowController = settingsWindow.contentViewController as! ViewController
-        settingsWindowController?.setApp(appDel: self)
         
+        initializeStatusItem()
+        initializeConfiguration()
+        initializePreferencesWindow()
+    }
+    
+    func initializeStatusItem() {
         statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
         statusItem?.image = NSImage(named: "ubuntu-white")
-        
+
         let statusMenu = NSMenu()
         startStopMenuItem = NSMenuItem(title: "Boot Ubuntu", action: #selector(AppDelegate.bootUbuntu), keyEquivalent: "")
         statusMenu.addItem(startStopMenuItem!)
-        statusMenu.addItem(NSMenuItem(title: "Debug", action: #selector(AppDelegate.debug), keyEquivalent: ""))
-        statusMenu.addItem(NSMenuItem(title: "Settings", action: #selector(AppDelegate.settings), keyEquivalent: ""))
-        statusMenu.addItem(NSMenuItem(title: "Quit", action: #selector(AppDelegate.quit), keyEquivalent: ""))
+        statusMenu.addItem(NSMenuItem(title: "Preferences", action: #selector(AppDelegate.showPreferencesWindow), keyEquivalent: ""))
+        statusMenu.addItem(NSMenuItem(title: "Quit", action: #selector(AppDelegate.quitApplication), keyEquivalent: ""))
         statusItem?.menu = statusMenu
-        
-        let appSupportDirectory = FileManager.default.urls(for: .applicationSupportDirectory,
-                                                         in: .userDomainMask)[0]
+    }
+    
+    func initializePreferencesWindow() {
+        mainWindow = NSApplication.shared.windows.first
+        mainWindow.close()
+        preferencesViewController = mainWindow.contentViewController as! ViewController
+        preferencesViewController?.setApp(appDel: self)
+    }
+    
+    func initializeConfiguration() {
+        let appSupportDirectory = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0]
         let sdslabsPath = appSupportDirectory.appendingPathComponent("SDSLabs")
-        let baseImagePath = sdslabsPath.appendingPathComponent("hdd.img")
-        var isDirectory = ObjCBool(true)
-        if FileManager.default.fileExists(atPath: sdslabsPath.path, isDirectory: &isDirectory) {
-            if !isDirectory.boolValue {
-                print("File with same path exists")
-                quit()
+        configPath = sdslabsPath.appendingPathComponent("config.json")
+        diskImagePath = sdslabsPath.appendingPathComponent("hdd.img")
+        
+        do
+        {
+            // Check if `~/Library/Application Support/SDSLabs` exist
+            var isDirectory = ObjCBool(true)
+            if FileManager.default.fileExists(atPath: sdslabsPath.path, isDirectory: &isDirectory) {
+                if !isDirectory.boolValue {
+                    print("File with same path exists")
+                    quitApplication()
+                }
             }
-        }
-        else {
-            do {
+            else {
                 try FileManager.default.createDirectory(at: sdslabsPath, withIntermediateDirectories: false, attributes: nil)
             }
-            catch {
-                print("couldn't make directory")
-                quit()
+            
+            // Check if config.json exists
+            if FileManager.default.fileExists(atPath: configPath.path) {
+                let configData = try String(contentsOf: configPath, encoding: .utf8)
+                let config = JSON(parseJSON: configData)
+                if let jsonCPU = config["cpu"].int {
+                    vCPU = jsonCPU
+                }
+                if let jsonMem = config["memory"].int {
+                    memory = jsonMem
+                }
+            }
+            else {
+                let config = JSON(dictionaryLiteral: ("cpu", vCPU), ("memory", memory))
+                print(config.description)
+                print(configPath.path)
+                try config.description.write(to: configPath, atomically: false, encoding: .utf8)
+            }
+            
+            // Check if hdd.img exists
+            if !FileManager.default.fileExists(atPath: diskImagePath.path) {
+                startStopMenuItem?.title = "Download Ubuntu"
+                isInstalled = false
             }
         }
-        
-        if !FileManager.default.fileExists(atPath: baseImagePath.path) {
-            // Todo: Toast notify that file doesn't exist
-            // But for now, change the button to "Download"
-            startStopMenuItem?.title = "Download Ubuntu"
-            isInstalled = false
-        }
-
-    }
-
-    @objc func debug() {
-        settingsWindowController?.showProgressSheet()
+        catch { quitApplication() }
     }
     
     func applicationWillTerminate(_ aNotification: Notification) {
@@ -86,25 +111,23 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                 "-C", "sudo poweroff"
             ]
             killer.launch()
-            settingsWindowController?.ipAddressField.stringValue = ""
+            preferencesViewController?.ipAddressField.stringValue = ""
             return
         }
     }
     
-    @objc func settings() {
+    @objc func showPreferencesWindow() {
+        NSApp.setActivationPolicy(.regular)
         NSApp.activate(ignoringOtherApps: true)
-        settingsWindow.makeKeyAndOrderFront(nil)
+        mainWindow.makeKeyAndOrderFront(nil)
     }
     
     func downloadUbuntuImage() {
-        let appSupportDirectory = FileManager.default.urls(for: .applicationSupportDirectory,
-                                                         in: .userDomainMask)[0]
-        let sdslabsPath = appSupportDirectory.appendingPathComponent("SDSLabs")
-        let baseImagePath = sdslabsPath.appendingPathComponent("hdd.img")
         let imageDownloadURL = "https://s3.ap-south-1.amazonaws.com/ubuntu-server-16.04.5-preinstalled/base.img"
-        settings()
-        settingsWindowController?.showProgressSheet()
-        settingsWindowController?.progressSheet.download(from: URL(string: imageDownloadURL)!, to: baseImagePath.path)
+        showPreferencesWindow()
+        preferencesViewController?.showProgressSheet()
+        preferencesViewController?.progressSheet
+            .download(from: URL(string: imageDownloadURL)!, to: diskImagePath.path)
     }
     
     @objc func bootUbuntu() {
@@ -122,12 +145,12 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                 "-C", "sudo poweroff"
             ]
             killer.launch()
-            settingsWindowController?.ipAddressField.stringValue = ""
+            preferencesViewController?.ipAddressField.stringValue = ""
             return
         }
         
-        vCPU = (settingsWindowController?.cpuSlider.integerValue)!
-        memory = (settingsWindowController?.memorySlider.integerValue)!
+        vCPU = (preferencesViewController?.cpuSlider.integerValue)!
+        memory = (preferencesViewController?.memorySlider.integerValue)!
         
         if let xhyveExecutableURL = Bundle.main.url(forResource: "xhyve", withExtension: "") {
             if let vmlinuzURL = Bundle.main.url(forResource: "vmlinuz-4.4.0-131-generic", withExtension: "") {
@@ -174,15 +197,15 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                             self.isRunning = false
 //                            self.startStopMenuItem?.isHidden = false
                             self.startStopMenuItem?.title = "Boot Ubuntu"
-                            self.settingsWindowController?.bootButton.title = "Boot"
-                            self.settingsWindowController?.setControls(val: true)
-                            self.settingsWindowController?.ipAddressField.stringValue = ""
+                            self.preferencesViewController?.bootButton.title = "Boot"
+                            self.preferencesViewController?.setControls(val: true)
+                            self.preferencesViewController?.ipAddressField.stringValue = ""
                         }
                     }
                     isRunning = true
                     startStopMenuItem?.title = "Kill Ubuntu"
-                    settingsWindowController?.bootButton.title = "Kill"
-                    settingsWindowController?.setControls(val: false)
+                    preferencesViewController?.bootButton.title = "Kill"
+                    preferencesViewController?.setControls(val: false)
                     
                     // Step 4: Get IP address from /var/db/dhcpd_leases
                     do {
@@ -199,7 +222,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                             else if trimmedLine == "}" {
                                 if hw_address == macAddress {
                                     ipAddress = ip_address
-                                    settingsWindowController?.ipAddressField.stringValue = ipAddress
+                                    preferencesViewController?.ipAddressField.stringValue = ipAddress
                                     print("found IP address \(ipAddress)")
                                     break
                                 }
@@ -223,10 +246,25 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         }
     }
     
-    @objc func quit() {
+    @objc func quitApplication() {
         NSApplication.shared.terminate(self)
     }
 
-
+    /*
+     Update Configuration
+     */
+    func updateCPU(_ c: Int) {
+        vCPU = c
+        let config = JSON(dictionaryLiteral: ("cpu", vCPU), ("memory", memory))
+        do { try config.description.write(to: configPath, atomically: false, encoding: .utf8) }
+        catch {}
+    }
+    
+    func updateMemory(_ m: Int) {
+        memory = m
+        let config = JSON(dictionaryLiteral: ("cpu", vCPU), ("memory", memory))
+        do { try config.description.write(to: configPath, atomically: false, encoding: .utf8) }
+        catch {}
+    }
 }
 
