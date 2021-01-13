@@ -14,6 +14,7 @@ class ProgressSheetController: NSViewController, URLSessionDownloadDelegate {
     
     @IBOutlet weak var cancelButton: NSButton!
     @IBOutlet weak var progressBar: NSProgressIndicator!
+    @IBOutlet weak var progressLabel: NSTextField!
 
     var task: URLSessionDownloadTask!
     var destPath: String!
@@ -39,8 +40,11 @@ class ProgressSheetController: NSViewController, URLSessionDownloadDelegate {
     {
         if downloadTask == task {
             let percentDownloaded = Double(totalBytesWritten) / Double(totalBytesExpectedToWrite)
+            let totalGigabytesWritten = String(format: "%.2f", Double(totalBytesWritten) / Double(1024 * 1024 * 1024))
+            let totalGigabytesExpected = String(format: "%.2f", Double(totalBytesExpectedToWrite) / Double(1024 * 1024 * 1024))
             DispatchQueue.main.async {
                 self.progressBar.doubleValue = percentDownloaded * 100
+                self.progressLabel.stringValue = "\(totalGigabytesWritten) / \(totalGigabytesExpected) GB"
             }
             print(percentDownloaded * 100)
         }

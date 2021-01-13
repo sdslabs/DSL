@@ -909,16 +909,35 @@ Gw
                                     <action selector="onCancel:" target="Jgy-4h-N7w" id="Fu4-xX-C5d"/>
                                 </connections>
                             </button>
+                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="l5j-hA-hIq">
+                                <rect key="frame" x="20" y="22" width="67" height="16"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <textFieldCell key="cell" lineBreakMode="clipping" title="Progress:" id="aoO-ob-QKb">
+                                    <font key="font" metaFont="system"/>
+                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="OU0-Ra-Orq">
+                                <rect key="frame" x="91" y="22" width="176" height="16"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <textFieldCell key="cell" lineBreakMode="clipping" id="PoD-4E-WrI">
+                                    <font key="font" metaFont="system"/>
+                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
                         </subviews>
                     </view>
                     <connections>
                         <outlet property="cancelButton" destination="mVy-qt-wRI" id="amX-Li-eXW"/>
                         <outlet property="progressBar" destination="Exi-9L-H1g" id="LrF-tZ-j6e"/>
+                        <outlet property="progressLabel" destination="OU0-Ra-Orq" id="Cwx-y6-C05"/>
                     </connections>
                 </viewController>
                 <customObject id="Vop-sM-FMW" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="12.5" y="961"/>
+            <point key="canvasLocation" x="76" y="942"/>
         </scene>
     </scenes>
     <resources>
