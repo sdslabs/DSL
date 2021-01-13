@@ -180,7 +180,9 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                     setStateTurnedOn()
                     
                     // Step 4: Get IP address from /var/db/dhcpd_leases
-                    fetchIP()
+                    DispatchQueue.global().asyncAfter(deadline: .now() + 3) {
+                        self.fetchIP()
+                    }
                 }
             }
         }
@@ -201,7 +203,9 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                 else if trimmedLine == "}" {
                     if currHWAddress == macAddress {
                         ipAddress = currIPAddress
-                        preferencesViewController?.ipAddressField.stringValue = ipAddress
+                        DispatchQueue.main.async {
+                            self.preferencesViewController?.ipAddressField.stringValue = currIPAddress
+                        }
                         print("found IP address \(ipAddress)")
                         break
                     }
