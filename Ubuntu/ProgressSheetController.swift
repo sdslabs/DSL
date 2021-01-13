@@ -31,6 +31,7 @@ class ProgressSheetController: NSViewController, URLSessionDownloadDelegate {
     }
 
     @IBAction func onCancel(_ sender: Any) {
+        task.cancel()
         mainViewController?.dismiss(self)
     }
     
@@ -47,11 +48,17 @@ class ProgressSheetController: NSViewController, URLSessionDownloadDelegate {
     
     func urlSession(_ session: URLSession, downloadTask: URLSessionDownloadTask, didFinishDownloadingTo location: URL)
     {
-        progressBar.stopAnimation(nil)
         do {
             try FileManager.default.moveItem(atPath: location.path, toPath: destPath)
+            mainViewController?.app.setStateTurnedOff()
         }
         catch {}
+        
+        DispatchQueue.main.async {
+            self.progressBar.stopAnimation(nil)
+            self.mainViewController?.app.setStateTurnedOff()
+            self.mainViewController?.dismiss(self)
+        }
     }
     
     func download(from url: URL, to path: String) {

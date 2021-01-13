@@ -8,12 +8,17 @@
 import Cocoa
 import SwiftyJSON
 
+enum State {
+    case notInstalled, installing, off, on
+}
+
 @main
 class AppDelegate: NSObject, NSApplicationDelegate {
     
     var statusItem : NSStatusItem? = nil
-    var isInstalled: Bool = true
-    var isRunning : Bool = false
+
+    var state: State = .off
+
     var osThread : DispatchWorkItem? = nil
     var startStopMenuItem : NSMenuItem? = nil
     var preferencesViewController: ViewController?
@@ -94,8 +99,10 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             
             // Check if hdd.img exists
             if !FileManager.default.fileExists(atPath: diskImagePath.path) {
-                startStopMenuItem?.title = "Download Ubuntu"
-                isInstalled = false
+                setStateNotInstalled()
+            }
+            else {
+                setStateTurnedOff()
             }
         }
         catch { quitApplication() }
@@ -103,16 +110,8 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     
     func applicationWillTerminate(_ aNotification: Notification) {
         // Insert code here to tear down your application
-        if isRunning {
-            let killer = Process()
-            killer.launchPath = "/usr/bin/ssh"
-            killer.arguments = [
-                "kanav@" + ipAddress,
-                "-C", "sudo poweroff"
-            ]
-            killer.launch()
-            preferencesViewController?.ipAddressField.stringValue = ""
-            return
+        if state == .on {
+            stopUbuntu()
         }
     }
     
@@ -122,35 +121,16 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         mainWindow.makeKeyAndOrderFront(nil)
     }
     
-    func downloadUbuntuImage() {
+    @objc func downloadUbuntuImage() {
         let imageDownloadURL = "https://s3.ap-south-1.amazonaws.com/ubuntu-server-16.04.5-preinstalled/base.img"
         showPreferencesWindow()
         preferencesViewController?.showProgressSheet()
         preferencesViewController?.progressSheet
             .download(from: URL(string: imageDownloadURL)!, to: diskImagePath.path)
+        setStateInstalling()
     }
     
     @objc func bootUbuntu() {
-        
-        if !isInstalled {
-            downloadUbuntuImage()
-            return
-        }
-        
-        if isRunning {
-            let killer = Process()
-            killer.launchPath = "/usr/bin/ssh"
-            killer.arguments = [
-                "kanav@" + ipAddress,
-                "-C", "sudo poweroff"
-            ]
-            killer.launch()
-            preferencesViewController?.ipAddressField.stringValue = ""
-            return
-        }
-        
-        vCPU = (preferencesViewController?.cpuSlider.integerValue)!
-        memory = (preferencesViewController?.memorySlider.integerValue)!
         
         if let xhyveExecutableURL = Bundle.main.url(forResource: "xhyve", withExtension: "") {
             if let vmlinuzURL = Bundle.main.url(forResource: "vmlinuz-4.4.0-131-generic", withExtension: "") {
@@ -164,9 +144,8 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                         "-m", "\(memory)G",
                         "-s", "0:0,hostbridge",
                         "-s", "31,lpc",
-                        "-l", "com1,stdio",
                         "-s", "2:0,virtio-net",
-                        "-s", "4,virtio-blk,/Users/kanav/ubuntu/ubuntu.img",
+                        "-s", "4,virtio-blk,\(diskImagePath.path)",
                         "-f", "kexec,\(vmlinuzURL.path),\(initrdURL.path),\"acpi=off root=/dev/vda1 ro quiet\""
                     ]
                     
@@ -183,6 +162,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                     // Next 17 bytes contain the mac address
                     macAddress = String(data: macAddressHandle.readData(ofLength: 17), encoding: String.Encoding.utf8)!
                     print("Got MAC Address: \(macAddress)")
+                    preferencesViewController?.macAddressField.stringValue = macAddress
 
                     // Step 3: Run OS
                     let outputData = Pipe()
@@ -194,56 +174,65 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                     DispatchQueue.global().async {
                         self.osTask!.waitUntilExit()
                         DispatchQueue.main.async {
-                            self.isRunning = false
-//                            self.startStopMenuItem?.isHidden = false
-                            self.startStopMenuItem?.title = "Boot Ubuntu"
-                            self.preferencesViewController?.bootButton.title = "Boot"
-                            self.preferencesViewController?.setControls(val: true)
-                            self.preferencesViewController?.ipAddressField.stringValue = ""
+                            self.setStateTurnedOff()
                         }
                     }
-                    isRunning = true
-                    startStopMenuItem?.title = "Kill Ubuntu"
-                    preferencesViewController?.bootButton.title = "Kill"
-                    preferencesViewController?.setControls(val: false)
+                    setStateTurnedOn()
                     
                     // Step 4: Get IP address from /var/db/dhcpd_leases
-                    do {
-                        let data = try String(contentsOfFile: "/var/db/dhcpd_leases", encoding: .utf8)
-                        let lines = data.components(separatedBy: .newlines)
-                        var ip_address = ""
-                        var hw_address = ""
-                        for line in lines {
-                            let trimmedLine = line.trimmingCharacters(in: .whitespacesAndNewlines)
-                            if trimmedLine == "{" {
-                                ip_address = ""
-                                hw_address = ""
-                            }
-                            else if trimmedLine == "}" {
-                                if hw_address == macAddress {
-                                    ipAddress = ip_address
-                                    preferencesViewController?.ipAddressField.stringValue = ipAddress
-                                    print("found IP address \(ipAddress)")
-                                    break
-                                }
-                             }
-                            else {
-                                if trimmedLine.starts(with: "hw_address=") {
-                                    hw_address = String(trimmedLine.split(separator: "=")[1].split(separator: ",")[1])
-                                }
-                                else if trimmedLine.starts(with: "ip_address=") {
-                                    ip_address = String(trimmedLine.split(separator: "=")[1])
-                                }
-                            }
-                        }
-                    }
-                    catch {
-                        print("couldn't find leases file")
-                    }
-                    
+                    fetchIP()
                 }
             }
         }
+    }
+    
+    func fetchIP() {
+        do {
+            let data = try String(contentsOfFile: "/var/db/dhcpd_leases", encoding: .utf8)
+            let lines = data.components(separatedBy: .newlines)
+            var currIPAddress = ""
+            var currHWAddress = ""
+            for line in lines {
+                let trimmedLine = line.trimmingCharacters(in: .whitespacesAndNewlines)
+                if trimmedLine == "{" {
+                    currIPAddress = ""
+                    currHWAddress = ""
+                }
+                else if trimmedLine == "}" {
+                    if currHWAddress == macAddress {
+                        ipAddress = currIPAddress
+                        preferencesViewController?.ipAddressField.stringValue = ipAddress
+                        print("found IP address \(ipAddress)")
+                        break
+                    }
+                 }
+                else {
+                    if trimmedLine.starts(with: "hw_address=") {
+                        currHWAddress = String(trimmedLine.split(separator: "=")[1].split(separator: ",")[1])
+                    }
+                    else if trimmedLine.starts(with: "ip_address=") {
+                        currIPAddress = String(trimmedLine.split(separator: "=")[1])
+                    }
+                }
+            }
+        }
+        catch {
+            print("couldn't find leases file")
+        }
+    }
+    
+    @objc func stopUbuntu() {
+//        let killer = Process()
+//        killer.launchPath = "/usr/bin/ssh"
+//        killer.arguments = [
+//            "default@" + ipAddress,
+//            "-C", "sudo poweroff"
+//        ]
+//        killer.launch()
+        // TODO: This is not a graceful way to shut down,
+        // TODO: Simulate ACPI shutdown
+        osTask?.terminate()
+        setStateTurnedOff()
     }
     
     @objc func quitApplication() {
@@ -265,6 +254,67 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         let config = JSON(dictionaryLiteral: ("cpu", vCPU), ("memory", memory))
         do { try config.description.write(to: configPath, atomically: false, encoding: .utf8) }
         catch {}
+    }
+    
+    /*
+     Set states of UI
+     */
+    func setStateNotInstalled() {
+        DispatchQueue.main.async {
+            self.state = .notInstalled
+            self.startStopMenuItem?.title = "Download Ubuntu.."
+            self.startStopMenuItem?.isEnabled = true
+            self.startStopMenuItem?.action = #selector(AppDelegate.downloadUbuntuImage)
+            self.preferencesViewController?.bootButton.title = "Download"
+            self.preferencesViewController?.bootButton.isEnabled = true
+            self.preferencesViewController?.terminalButton.isEnabled = false
+            self.preferencesViewController?.cpuSlider.isEnabled = false
+            self.preferencesViewController?.memorySlider.isEnabled = false
+        }
+    }
+    
+    func setStateInstalling() {
+        DispatchQueue.main.async {
+            self.state = .installing
+            self.startStopMenuItem?.title = "Downloading..."
+            self.startStopMenuItem?.isEnabled = false
+            self.startStopMenuItem?.action = nil
+            self.preferencesViewController?.bootButton.title = "Download"
+            self.preferencesViewController?.bootButton.isEnabled = false
+            self.preferencesViewController?.terminalButton.isEnabled = false
+            self.preferencesViewController?.cpuSlider.isEnabled = false
+            self.preferencesViewController?.memorySlider.isEnabled = false
+        }
+    }
+    
+    func setStateTurnedOff() {
+        DispatchQueue.main.async {
+            self.state = .off
+            self.startStopMenuItem?.title = "Boot-up"
+            self.startStopMenuItem?.isEnabled = true
+            self.startStopMenuItem?.action = #selector(AppDelegate.bootUbuntu)
+            self.preferencesViewController?.bootButton.title = "Boot"
+            self.preferencesViewController?.bootButton.isEnabled = true
+            self.preferencesViewController?.terminalButton.isEnabled = false
+            self.preferencesViewController?.cpuSlider.isEnabled = true
+            self.preferencesViewController?.memorySlider.isEnabled = true
+            self.preferencesViewController?.ipAddressField.stringValue = ""
+            self.preferencesViewController?.macAddressField.stringValue = ""
+        }
+    }
+    
+    func setStateTurnedOn() {
+        DispatchQueue.main.async {
+            self.state = .on
+            self.startStopMenuItem?.title = "Shut Down"
+            self.startStopMenuItem?.isEnabled = true
+            self.startStopMenuItem?.action = #selector(AppDelegate.stopUbuntu)
+            self.preferencesViewController?.bootButton.title = "Shut down"
+            self.preferencesViewController?.bootButton.isEnabled = true
+            self.preferencesViewController?.terminalButton.isEnabled = true
+            self.preferencesViewController?.cpuSlider.isEnabled = false
+            self.preferencesViewController?.memorySlider.isEnabled = false
+        }
     }
 }
 

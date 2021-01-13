@@ -11,7 +11,13 @@ class ViewController: NSViewController {
 
     var app: AppDelegate!
     
+    @IBOutlet weak var macAddressField: NSTextField!
     @IBOutlet weak var ipAddressField: NSTextField!
+    
+    
+    @IBOutlet weak var copyMacAddressButton: NSButton!
+    @IBOutlet weak var copyIpAddressButton: NSButton!
+
     @IBOutlet weak var cpuSlider: NSSlider!
     @IBOutlet weak var cpuLabel: NSTextField!
     @IBOutlet weak var memorySlider: NSSlider!
@@ -62,7 +68,16 @@ class ViewController: NSViewController {
     }
     
     @IBAction func bootUbuntu(_ sender: Any) {
-        app.bootUbuntu()
+        switch app.state {
+        case .on:
+            app.stopUbuntu()
+        case .off:
+            app.bootUbuntu()
+        case .notInstalled:
+            app.downloadUbuntuImage()
+        case .installing:
+            return
+        }
     }
     
     @IBAction func openTerminal(_ sender: Any) {
@@ -73,13 +88,25 @@ class ViewController: NSViewController {
 //        ]
 //        terminalTask.launch()
         
-        let script = NSAppleScript.init(source: "tell application \"Terminal\" to do script \"cd ~/Desktop\"")
-        script?.executeAndReturnError(nil)
+//        let script = NSAppleScript.init(source: "tell application \"Terminal\" to do script \"cd ~/Desktop\"")
+//        script?.executeAndReturnError(nil)
         
     }
     
     func showProgressSheet() {
         presentAsSheet(progressSheet)
+    }
+    
+    @IBAction func copyMac(_ sender: Any) {
+        let pasteboard = NSPasteboard.general
+        pasteboard.declareTypes([.string], owner: nil)
+        pasteboard.setString(macAddressField.stringValue, forType: .string)
+    }
+    
+    @IBAction func copyIp(_ sender: Any) {
+        let pasteboard = NSPasteboard.general
+        pasteboard.declareTypes([.string], owner: nil)
+        pasteboard.setString(ipAddressField.stringValue, forType: .string)
     }
 }
 
