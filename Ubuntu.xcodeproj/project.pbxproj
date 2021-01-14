@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		6F03EEAE25AE1706005ABD99 /* SwiftyJSON in Frameworks */ = {isa = PBXBuildFile; productRef = 6F03EEAD25AE1706005ABD99 /* SwiftyJSON */; };
 		6F03EEB225AE26B5005ABD99 /* MainWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F03EEB125AE26B5005ABD99 /* MainWindowController.swift */; };
+		6F155D2C25B064820050A2E8 /* hyperkit in Resources */ = {isa = PBXBuildFile; fileRef = 6F155D2B25B064820050A2E8 /* hyperkit */; };
 		6F2EE07525A99FB300B4E169 /* Authorization.m in Sources */ = {isa = PBXBuildFile; fileRef = 6F2EE07425A99FB300B4E169 /* Authorization.m */; };
 		6F2F8C6425ADE91B004C231D /* ProgressSheetController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F2F8C6325ADE91B004C231D /* ProgressSheetController.swift */; };
 		6FB349AF25A8C3F500666240 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FB349AE25A8C3F500666240 /* AppDelegate.swift */; };
@@ -22,6 +23,7 @@
 
 /* Begin PBXFileReference section */
 		6F03EEB125AE26B5005ABD99 /* MainWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainWindowController.swift; sourceTree = "<group>"; };
+		6F155D2B25B064820050A2E8 /* hyperkit */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.executable"; path = hyperkit; sourceTree = "<group>"; };
 		6F2EE07325A99FB300B4E169 /* Ubuntu-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Ubuntu-Bridging-Header.h"; sourceTree = "<group>"; };
 		6F2EE07425A99FB300B4E169 /* Authorization.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Authorization.m; sourceTree = "<group>"; };
 		6F2F8C6325ADE91B004C231D /* ProgressSheetController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProgressSheetController.swift; sourceTree = "<group>"; };
@@ -69,6 +71,7 @@
 		6FB349AD25A8C3F500666240 /* Ubuntu */ = {
 			isa = PBXGroup;
 			children = (
+				6F155D2B25B064820050A2E8 /* hyperkit */,
 				6FB349C825A8ECC600666240 /* boot */,
 				6FB349AE25A8C3F500666240 /* AppDelegate.swift */,
 				6FB349B025A8C3F500666240 /* ViewController.swift */,
@@ -168,6 +171,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6F155D2C25B064820050A2E8 /* hyperkit in Resources */,
 				6FB349C625A8E4C400666240 /* xhyve in Resources */,
 				6FB349B325A8C3F700666240 /* Assets.xcassets in Resources */,
 				6FB349CB25A8ECF800666240 /* initrd.img-4.4.0-131-generic in Resources */,
@@ -334,6 +338,7 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
+				MARKETING_VERSION = 0.1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = org.sdslabs.Ubuntu;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "Ubuntu/Ubuntu-Bridging-Header.h";
@@ -356,6 +361,7 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
+				MARKETING_VERSION = 0.1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = org.sdslabs.Ubuntu;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "Ubuntu/Ubuntu-Bridging-Header.h";

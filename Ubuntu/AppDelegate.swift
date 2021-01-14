@@ -31,6 +31,8 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     var vCPU: Int = 2
     var diskImagePath: URL!
     var configPath: URL!
+    
+    var hypervisor: String = "hyperkit"
 
     func applicationDidFinishLaunching(_ aNotification: Notification) {
         // Insert code here to initialize your application
@@ -132,11 +134,11 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     
     @objc func bootUbuntu() {
         
-        if let xhyveExecutableURL = Bundle.main.url(forResource: "xhyve", withExtension: "") {
+        if let hypervisorExecutableURL = Bundle.main.url(forResource: hypervisor, withExtension: "") {
             if let vmlinuzURL = Bundle.main.url(forResource: "vmlinuz-4.4.0-131-generic", withExtension: "") {
                 if let initrdURL = Bundle.main.url(forResource: "initrd.img-4.4.0-131-generic", withExtension: "") {
                     // Step 1: Set setuid bit for xhyve
-                    setuid_file(xhyveExecutableURL.path)
+                    setuid_file(hypervisorExecutableURL.path)
                     
                     let arguments = [
                         "-c", String(vCPU),
@@ -152,7 +154,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                     // Step 2: Get MAC Address for the VM
                     let macAddressPipe = Pipe()
                     let macAddressTask = Process()
-                    macAddressTask.launchPath = xhyveExecutableURL.path
+                    macAddressTask.launchPath = hypervisorExecutableURL.path
                     macAddressTask.standardOutput = macAddressPipe
                     macAddressTask.arguments = arguments + ["-M"]
                     macAddressTask.launch()
@@ -167,7 +169,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                     // Step 3: Run OS
                     let outputData = Pipe()
                     osTask = Process()
-                    osTask!.launchPath = xhyveExecutableURL.path
+                    osTask!.launchPath = hypervisorExecutableURL.path
                     osTask!.arguments = arguments
                     osTask!.standardOutput = outputData
                     osTask!.launch()
