@@ -24,11 +24,19 @@ class ViewController: NSViewController {
     @IBOutlet weak var memoryLabel: NSTextField!
     @IBOutlet weak var bootButton: NSButton!
     @IBOutlet weak var terminalButton: NSButton!
+    @IBOutlet weak var manageDisksButton: NSButton!
     
     lazy var progressSheet: ProgressSheetController = {
         var sheet = self.storyboard!.instantiateController(withIdentifier: NSStoryboard.SceneIdentifier("progress")) as! ProgressSheetController
         sheet.mainViewController = self
         return sheet
+    }()
+    
+    lazy var diskManagerViewController: DiskManagerViewController = {
+        var vc = self.storyboard!.instantiateController(withIdentifier: NSStoryboard.SceneIdentifier("disk-manager")) as! DiskManagerViewController
+        vc.app = app
+        vc.disks = app.disks
+        return vc
     }()
     
     override func viewDidLoad() {
@@ -92,6 +100,11 @@ class ViewController: NSViewController {
 //        script?.executeAndReturnError(nil)
         
     }
+    
+    @IBAction func openDiskManager(_ sender: Any) {
+        self.presentAsModalWindow(diskManagerViewController)
+    }
+    
     
     func showProgressSheet() {
         presentAsSheet(progressSheet)

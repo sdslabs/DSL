@@ -31,6 +31,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     var vCPU: Int = 2
     var diskImagePath: URL!
     var configPath: URL!
+    var disks: [DiskImage] = []
     
     var hypervisor: String = "hyperkit"
 
@@ -90,6 +91,11 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                 }
                 if let jsonMem = config["memory"].int {
                     memory = jsonMem
+                }
+                if let jsonDisks = config["disks"].array {
+                    for j in jsonDisks {
+                        disks.append(DiskImage(name: j["name"].string!, format: j["format"].string! == "qcow2" ? .qcow2 : .raw, storage: j["storage"].int32!, storageUnit: j["unit"].string! == "gb" ? .gb : .mb, mounted: j["mount"].bool!))
+                    }
                 }
             }
             else {
@@ -246,14 +252,26 @@ class AppDelegate: NSObject, NSApplicationDelegate {
      */
     func updateCPU(_ c: Int) {
         vCPU = c
-        let config = JSON(dictionaryLiteral: ("cpu", vCPU), ("memory", memory))
-        do { try config.description.write(to: configPath, atomically: false, encoding: .utf8) }
-        catch {}
+        updateJSON()
     }
     
     func updateMemory(_ m: Int) {
         memory = m
-        let config = JSON(dictionaryLiteral: ("cpu", vCPU), ("memory", memory))
+        updateJSON()
+    }
+    
+    func updateDisks(_ d: [DiskImage]) {
+        disks = d
+        updateJSON()
+    }
+    
+    func updateJSON() {
+        var jsonDiskArray: [JSON] = []
+        for d in disks {
+            jsonDiskArray.append(JSON(dictionaryLiteral: ("name", d.name), ("format", d.format == .qcow2 ? "qcow2" : "raw"), ("storage", d.storage), ("unit", d.storageUnit == .gb ? "gb" : "mb"), ("mount", d.mounted)))
+        }
+        var disksJSON = JSON(jsonDiskArray)
+        let config = JSON(dictionaryLiteral: ("cpu", vCPU), ("memory", memory), ("disks", disksJSON))
         do { try config.description.write(to: configPath, atomically: false, encoding: .utf8) }
         catch {}
     }

@@ -10,6 +10,8 @@
 		6F03EEAE25AE1706005ABD99 /* SwiftyJSON in Frameworks */ = {isa = PBXBuildFile; productRef = 6F03EEAD25AE1706005ABD99 /* SwiftyJSON */; };
 		6F03EEB225AE26B5005ABD99 /* MainWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F03EEB125AE26B5005ABD99 /* MainWindowController.swift */; };
 		6F155D2C25B064820050A2E8 /* hyperkit in Resources */ = {isa = PBXBuildFile; fileRef = 6F155D2B25B064820050A2E8 /* hyperkit */; };
+		6F155D3225B0742E0050A2E8 /* DiskManagerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F155D3125B0742E0050A2E8 /* DiskManagerViewController.swift */; };
+		6F155D3625B075900050A2E8 /* AddDiskSheetController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F155D3525B075900050A2E8 /* AddDiskSheetController.swift */; };
 		6F2EE07525A99FB300B4E169 /* Authorization.m in Sources */ = {isa = PBXBuildFile; fileRef = 6F2EE07425A99FB300B4E169 /* Authorization.m */; };
 		6F2F8C6425ADE91B004C231D /* ProgressSheetController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F2F8C6325ADE91B004C231D /* ProgressSheetController.swift */; };
 		6FB349AF25A8C3F500666240 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FB349AE25A8C3F500666240 /* AppDelegate.swift */; };
@@ -24,6 +26,8 @@
 /* Begin PBXFileReference section */
 		6F03EEB125AE26B5005ABD99 /* MainWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainWindowController.swift; sourceTree = "<group>"; };
 		6F155D2B25B064820050A2E8 /* hyperkit */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.executable"; path = hyperkit; sourceTree = "<group>"; };
+		6F155D3125B0742E0050A2E8 /* DiskManagerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiskManagerViewController.swift; sourceTree = "<group>"; };
+		6F155D3525B075900050A2E8 /* AddDiskSheetController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddDiskSheetController.swift; sourceTree = "<group>"; };
 		6F2EE07325A99FB300B4E169 /* Ubuntu-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Ubuntu-Bridging-Header.h"; sourceTree = "<group>"; };
 		6F2EE07425A99FB300B4E169 /* Authorization.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Authorization.m; sourceTree = "<group>"; };
 		6F2F8C6325ADE91B004C231D /* ProgressSheetController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProgressSheetController.swift; sourceTree = "<group>"; };
@@ -51,6 +55,15 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		6F155D3825B0D3090050A2E8 /* hypervisor */ = {
+			isa = PBXGroup;
+			children = (
+				6FB349C525A8E4C400666240 /* xhyve */,
+				6F155D2B25B064820050A2E8 /* hyperkit */,
+			);
+			path = hypervisor;
+			sourceTree = "<group>";
+		};
 		6FB349A225A8C3F500666240 = {
 			isa = PBXGroup;
 			children = (
@@ -71,19 +84,20 @@
 		6FB349AD25A8C3F500666240 /* Ubuntu */ = {
 			isa = PBXGroup;
 			children = (
-				6F155D2B25B064820050A2E8 /* hyperkit */,
+				6F155D3825B0D3090050A2E8 /* hypervisor */,
 				6FB349C825A8ECC600666240 /* boot */,
 				6FB349AE25A8C3F500666240 /* AppDelegate.swift */,
+				6F03EEB125AE26B5005ABD99 /* MainWindowController.swift */,
 				6FB349B025A8C3F500666240 /* ViewController.swift */,
-				6FB349B225A8C3F700666240 /* Assets.xcassets */,
-				6FB349C525A8E4C400666240 /* xhyve */,
+				6F155D3125B0742E0050A2E8 /* DiskManagerViewController.swift */,
+				6F155D3525B075900050A2E8 /* AddDiskSheetController.swift */,
+				6F2F8C6325ADE91B004C231D /* ProgressSheetController.swift */,
+				6F2EE07325A99FB300B4E169 /* Ubuntu-Bridging-Header.h */,
+				6F2EE07425A99FB300B4E169 /* Authorization.m */,
 				6FB349B425A8C3F700666240 /* Main.storyboard */,
+				6FB349B225A8C3F700666240 /* Assets.xcassets */,
 				6FB349B725A8C3F700666240 /* Info.plist */,
 				6FB349B825A8C3F700666240 /* Ubuntu.entitlements */,
-				6F2EE07425A99FB300B4E169 /* Authorization.m */,
-				6F2EE07325A99FB300B4E169 /* Ubuntu-Bridging-Header.h */,
-				6F2F8C6325ADE91B004C231D /* ProgressSheetController.swift */,
-				6F03EEB125AE26B5005ABD99 /* MainWindowController.swift */,
 			);
 			path = Ubuntu;
 			sourceTree = "<group>";
@@ -187,9 +201,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6F155D3225B0742E0050A2E8 /* DiskManagerViewController.swift in Sources */,
 				6FB349B125A8C3F500666240 /* ViewController.swift in Sources */,
 				6FB349AF25A8C3F500666240 /* AppDelegate.swift in Sources */,
 				6F2F8C6425ADE91B004C231D /* ProgressSheetController.swift in Sources */,
+				6F155D3625B075900050A2E8 /* AddDiskSheetController.swift in Sources */,
 				6F2EE07525A99FB300B4E169 /* Authorization.m in Sources */,
 				6F03EEB225AE26B5005ABD99 /* MainWindowController.swift in Sources */,
 			);
