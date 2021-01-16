@@ -40,7 +40,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         
         initializeStatusItem()
         initializeConfiguration()
-        initializePreferencesWindow()
+        initializePreferencesWindow() // Preferences window should always be initialized after config
     }
     
     func initializeStatusItem() {
@@ -99,7 +99,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                 }
             }
             else {
-                let config = JSON(dictionaryLiteral: ("cpu", vCPU), ("memory", memory))
+                let config = JSON(dictionaryLiteral: ("cpu", vCPU), ("memory", memory), ("disks", JSON([])))
                 print(config.description)
                 print(configPath.path)
                 try config.description.write(to: configPath, atomically: false, encoding: .utf8)
@@ -138,6 +138,35 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         setStateInstalling()
     }
     
+    func diskArgs() -> [String] {
+        var i = 5
+        let basePath: URL
+        do {
+            basePath = try DiskTools.getDisksDirectory()
+        }
+        catch {
+            return []
+        }
+        var args: [String] = []
+        for disk in disks {
+            if disk.mounted {
+                args.append("-s")
+                var arg = "\(i),virtio-blk,"
+                i += 1
+                if disk.format == .qcow2 {
+                    let diskPath = basePath.appendingPathComponent("\(disk.name).qcow2")
+                    arg += "file://\(diskPath.path),format=qcow"
+                }
+                else if disk.format == .raw {
+                    let diskPath = basePath.appendingPathComponent("\(disk.name).img")
+                    arg += diskPath.path
+                }
+                args.append(arg)
+            }
+        }
+        return args
+    }
+    
     @objc func bootUbuntu() {
         
         if let hypervisorExecutableURL = Bundle.main.url(forResource: hypervisor, withExtension: "") {
@@ -155,7 +184,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                         "-s", "2:0,virtio-net",
                         "-s", "4,virtio-blk,\(diskImagePath.path)",
                         "-f", "kexec,\(vmlinuzURL.path),\(initrdURL.path),\"acpi=off root=/dev/vda1 ro quiet\""
-                    ]
+                    ] + diskArgs()
                     
                     // Step 2: Get MAC Address for the VM
                     let macAddressPipe = Pipe()
@@ -270,7 +299,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         for d in disks {
             jsonDiskArray.append(JSON(dictionaryLiteral: ("name", d.name), ("format", d.format == .qcow2 ? "qcow2" : "raw"), ("storage", d.storage), ("unit", d.storageUnit == .gb ? "gb" : "mb"), ("mount", d.mounted)))
         }
-        var disksJSON = JSON(jsonDiskArray)
+        let disksJSON = JSON(jsonDiskArray)
         let config = JSON(dictionaryLiteral: ("cpu", vCPU), ("memory", memory), ("disks", disksJSON))
         do { try config.description.write(to: configPath, atomically: false, encoding: .utf8) }
         catch {}
@@ -288,6 +317,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             self.preferencesViewController?.bootButton.title = "Download"
             self.preferencesViewController?.bootButton.isEnabled = true
             self.preferencesViewController?.terminalButton.isEnabled = false
+            self.preferencesViewController?.manageDisksButton.isEnabled = false
             self.preferencesViewController?.cpuSlider.isEnabled = false
             self.preferencesViewController?.memorySlider.isEnabled = false
         }
@@ -302,6 +332,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             self.preferencesViewController?.bootButton.title = "Download"
             self.preferencesViewController?.bootButton.isEnabled = false
             self.preferencesViewController?.terminalButton.isEnabled = false
+            self.preferencesViewController?.manageDisksButton.isEnabled = false
             self.preferencesViewController?.cpuSlider.isEnabled = false
             self.preferencesViewController?.memorySlider.isEnabled = false
         }
@@ -316,6 +347,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             self.preferencesViewController?.bootButton.title = "Boot"
             self.preferencesViewController?.bootButton.isEnabled = true
             self.preferencesViewController?.terminalButton.isEnabled = false
+            self.preferencesViewController?.manageDisksButton.isEnabled = true
             self.preferencesViewController?.cpuSlider.isEnabled = true
             self.preferencesViewController?.memorySlider.isEnabled = true
             self.preferencesViewController?.ipAddressField.stringValue = ""
@@ -332,6 +364,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             self.preferencesViewController?.bootButton.title = "Shut down"
             self.preferencesViewController?.bootButton.isEnabled = true
             self.preferencesViewController?.terminalButton.isEnabled = true
+            self.preferencesViewController?.manageDisksButton.isEnabled = false
             self.preferencesViewController?.cpuSlider.isEnabled = false
             self.preferencesViewController?.memorySlider.isEnabled = false
         }

@@ -60,6 +60,10 @@ class AddDiskSheetController: NSViewController {
         let format = formatPopUpButton.indexOfSelectedItem == 1 ? DiskFormat.raw : .qcow2
         let storageUnit = spaceSuffixPopUpButton.indexOfSelectedItem == 1 ? StorageUnit.gb : .mb
         let disk = DiskImage(name: nameTextField.stringValue, format: format, storage: spaceTextField.intValue, storageUnit: storageUnit, mounted: true)
+        do {
+            try DiskTools.createDisk(d: disk)
+        }
+        catch { print("err") }
         parentController.addDisk(disk)
         self.dismiss(nil)
     }
