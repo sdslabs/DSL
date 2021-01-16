@@ -384,7 +384,7 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MARKETING_VERSION = 0.1.0;
+				MARKETING_VERSION = 0.2.0;
 				PRODUCT_BUNDLE_IDENTIFIER = org.sdslabs.Ubuntu;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "Ubuntu/Ubuntu-Bridging-Header.h";
@@ -407,7 +407,7 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MARKETING_VERSION = 0.1.0;
+				MARKETING_VERSION = 0.2.0;
 				PRODUCT_BUNDLE_IDENTIFIER = org.sdslabs.Ubuntu;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "Ubuntu/Ubuntu-Bridging-Header.h";
