@@ -47,6 +47,7 @@
 		6FB349C525A8E4C400666240 /* xhyve */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.executable"; path = xhyve; sourceTree = "<group>"; };
 		6FB349C925A8ECF800666240 /* initrd.img-4.4.0-131-generic */ = {isa = PBXFileReference; lastKnownFileType = file; path = "initrd.img-4.4.0-131-generic"; sourceTree = "<group>"; };
 		6FB349CA25A8ECF800666240 /* vmlinuz-4.4.0-131-generic */ = {isa = PBXFileReference; lastKnownFileType = file; path = "vmlinuz-4.4.0-131-generic"; sourceTree = "<group>"; };
+		6FD78FBB25B306BE00AD4942 /* 00-automount.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = "00-automount.sh"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -100,6 +101,7 @@
 		6FB349AD25A8C3F500666240 /* Ubuntu */ = {
 			isa = PBXGroup;
 			children = (
+				6FD78FBA25B3069900AD4942 /* updates */,
 				6F8FF13C25B21B81003DF0A7 /* disk */,
 				6F155D3825B0D3090050A2E8 /* hypervisor */,
 				6FB349C825A8ECC600666240 /* boot */,
@@ -133,6 +135,14 @@
 				6FB349CA25A8ECF800666240 /* vmlinuz-4.4.0-131-generic */,
 			);
 			path = boot;
+			sourceTree = "<group>";
+		};
+		6FD78FBA25B3069900AD4942 /* updates */ = {
+			isa = PBXGroup;
+			children = (
+				6FD78FBB25B306BE00AD4942 /* 00-automount.sh */,
+			);
+			path = updates;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
