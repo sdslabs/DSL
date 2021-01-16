@@ -3,7 +3,7 @@
 Darwin subsytem for Linux. Not actually a subsystem like WSL, but runs an Ubuntu 16 VM on a hypervisor ([xhyve](https://github.com/machyve/xhyve) or [hyperkit](https://github.com/moby/hyperkit)) and adds a nice frontend to manage the VM.
 Goal is to make running Ubuntu or any flavour of linux as seamless as possible using existing technologies.
 
-<p align="center"><img src="https://i.imgur.com/RmKKUun.png" width="70%"></p>
+<p align="center"><img src="https://i.imgur.com/xHDyG8t.png" width="70%"></p>
 
 ## Installation
 
