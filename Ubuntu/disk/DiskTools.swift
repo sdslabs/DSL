@@ -104,6 +104,15 @@ class DiskTools {
         return disksPath
     }
     
+    static func diskExistWithName(d: String) -> Bool {
+        let appSupportDirectory = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0]
+        let sdslabsPath = appSupportDirectory.appendingPathComponent("SDSLabs")
+        let disksPath = sdslabsPath.appendingPathComponent("disks")
+        let qcowPath = disksPath.appendingPathComponent("\(d).qcow2")
+        let rawPath = disksPath.appendingPathComponent("\(d).img")
+        return FileManager.default.fileExists(atPath: qcowPath.path) || FileManager.default.fileExists(atPath: rawPath.path)
+    }
+    
     static func createDisk(d: DiskImage) throws {
         let sizeInMegaBytes = d.storageUnit == .gb ? d.storage * 1024 : d.storage
         let disksPath = try getDisksDirectory()
