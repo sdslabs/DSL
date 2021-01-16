@@ -7,7 +7,7 @@ Goal is to make running Ubuntu or any flavour of linux as seamless as possible u
 
 ## Installation
 
-Head over to ![releases page](https://github.com/sdslabs/DSL/releases) to download the latest version of Ubuntu.dmg and move the App to Applications folder. On the first run, it will make you download a base image, which is 3 Gb in size. You can later make and attach other disks to the VM. Login via SSH using username `default` and password `password`.
+Head over to [releases page](https://github.com/sdslabs/DSL/releases) to download the latest version of Ubuntu.dmg and move the App to Applications folder. On the first run, it will make you download a base image, which is 3 Gb in size. You can later make and attach other disks to the VM. Login via SSH using username `default` and password `password`.
 
 ## Licensing
 
