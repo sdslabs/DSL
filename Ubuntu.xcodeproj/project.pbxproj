@@ -10,8 +10,13 @@
 		6F03EEAE25AE1706005ABD99 /* SwiftyJSON in Frameworks */ = {isa = PBXBuildFile; productRef = 6F03EEAD25AE1706005ABD99 /* SwiftyJSON */; };
 		6F03EEB225AE26B5005ABD99 /* MainWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F03EEB125AE26B5005ABD99 /* MainWindowController.swift */; };
 		6F155D2C25B064820050A2E8 /* hyperkit in Resources */ = {isa = PBXBuildFile; fileRef = 6F155D2B25B064820050A2E8 /* hyperkit */; };
+		6F155D3225B0742E0050A2E8 /* DiskManagerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F155D3125B0742E0050A2E8 /* DiskManagerViewController.swift */; };
+		6F155D3625B075900050A2E8 /* AddDiskSheetController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F155D3525B075900050A2E8 /* AddDiskSheetController.swift */; };
 		6F2EE07525A99FB300B4E169 /* Authorization.m in Sources */ = {isa = PBXBuildFile; fileRef = 6F2EE07425A99FB300B4E169 /* Authorization.m */; };
 		6F2F8C6425ADE91B004C231D /* ProgressSheetController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F2F8C6325ADE91B004C231D /* ProgressSheetController.swift */; };
+		6F8923A025B2263C00D8118F /* DiskTools.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F89239F25B2263C00D8118F /* DiskTools.swift */; };
+		6F8FF14125B21C41003DF0A7 /* qemu-img in Resources */ = {isa = PBXBuildFile; fileRef = 6F8FF14025B21C41003DF0A7 /* qemu-img */; };
+		6F8FF14525B21C87003DF0A7 /* mkfs in Resources */ = {isa = PBXBuildFile; fileRef = 6F8FF14425B21C87003DF0A7 /* mkfs */; };
 		6FB349AF25A8C3F500666240 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FB349AE25A8C3F500666240 /* AppDelegate.swift */; };
 		6FB349B125A8C3F500666240 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FB349B025A8C3F500666240 /* ViewController.swift */; };
 		6FB349B325A8C3F700666240 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6FB349B225A8C3F700666240 /* Assets.xcassets */; };
@@ -24,9 +29,14 @@
 /* Begin PBXFileReference section */
 		6F03EEB125AE26B5005ABD99 /* MainWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainWindowController.swift; sourceTree = "<group>"; };
 		6F155D2B25B064820050A2E8 /* hyperkit */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.executable"; path = hyperkit; sourceTree = "<group>"; };
+		6F155D3125B0742E0050A2E8 /* DiskManagerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiskManagerViewController.swift; sourceTree = "<group>"; };
+		6F155D3525B075900050A2E8 /* AddDiskSheetController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddDiskSheetController.swift; sourceTree = "<group>"; };
 		6F2EE07325A99FB300B4E169 /* Ubuntu-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Ubuntu-Bridging-Header.h"; sourceTree = "<group>"; };
 		6F2EE07425A99FB300B4E169 /* Authorization.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Authorization.m; sourceTree = "<group>"; };
 		6F2F8C6325ADE91B004C231D /* ProgressSheetController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProgressSheetController.swift; sourceTree = "<group>"; };
+		6F89239F25B2263C00D8118F /* DiskTools.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiskTools.swift; sourceTree = "<group>"; };
+		6F8FF14025B21C41003DF0A7 /* qemu-img */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.executable"; path = "qemu-img"; sourceTree = "<group>"; };
+		6F8FF14425B21C87003DF0A7 /* mkfs */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.executable"; name = mkfs; path = ../../../../../ubuntu/mkfs; sourceTree = "<group>"; };
 		6FB349AB25A8C3F500666240 /* Ubuntu.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Ubuntu.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		6FB349AE25A8C3F500666240 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		6FB349B025A8C3F500666240 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -37,6 +47,7 @@
 		6FB349C525A8E4C400666240 /* xhyve */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.executable"; path = xhyve; sourceTree = "<group>"; };
 		6FB349C925A8ECF800666240 /* initrd.img-4.4.0-131-generic */ = {isa = PBXFileReference; lastKnownFileType = file; path = "initrd.img-4.4.0-131-generic"; sourceTree = "<group>"; };
 		6FB349CA25A8ECF800666240 /* vmlinuz-4.4.0-131-generic */ = {isa = PBXFileReference; lastKnownFileType = file; path = "vmlinuz-4.4.0-131-generic"; sourceTree = "<group>"; };
+		6FD78FBB25B306BE00AD4942 /* 00-automount.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = "00-automount.sh"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -51,6 +62,25 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		6F155D3825B0D3090050A2E8 /* hypervisor */ = {
+			isa = PBXGroup;
+			children = (
+				6FB349C525A8E4C400666240 /* xhyve */,
+				6F155D2B25B064820050A2E8 /* hyperkit */,
+			);
+			path = hypervisor;
+			sourceTree = "<group>";
+		};
+		6F8FF13C25B21B81003DF0A7 /* disk */ = {
+			isa = PBXGroup;
+			children = (
+				6F8FF14425B21C87003DF0A7 /* mkfs */,
+				6F8FF14025B21C41003DF0A7 /* qemu-img */,
+				6F89239F25B2263C00D8118F /* DiskTools.swift */,
+			);
+			path = disk;
+			sourceTree = "<group>";
+		};
 		6FB349A225A8C3F500666240 = {
 			isa = PBXGroup;
 			children = (
@@ -71,19 +101,22 @@
 		6FB349AD25A8C3F500666240 /* Ubuntu */ = {
 			isa = PBXGroup;
 			children = (
-				6F155D2B25B064820050A2E8 /* hyperkit */,
+				6FD78FBA25B3069900AD4942 /* updates */,
+				6F8FF13C25B21B81003DF0A7 /* disk */,
+				6F155D3825B0D3090050A2E8 /* hypervisor */,
 				6FB349C825A8ECC600666240 /* boot */,
 				6FB349AE25A8C3F500666240 /* AppDelegate.swift */,
+				6F03EEB125AE26B5005ABD99 /* MainWindowController.swift */,
 				6FB349B025A8C3F500666240 /* ViewController.swift */,
-				6FB349B225A8C3F700666240 /* Assets.xcassets */,
-				6FB349C525A8E4C400666240 /* xhyve */,
+				6F155D3125B0742E0050A2E8 /* DiskManagerViewController.swift */,
+				6F155D3525B075900050A2E8 /* AddDiskSheetController.swift */,
+				6F2F8C6325ADE91B004C231D /* ProgressSheetController.swift */,
+				6F2EE07325A99FB300B4E169 /* Ubuntu-Bridging-Header.h */,
+				6F2EE07425A99FB300B4E169 /* Authorization.m */,
 				6FB349B425A8C3F700666240 /* Main.storyboard */,
+				6FB349B225A8C3F700666240 /* Assets.xcassets */,
 				6FB349B725A8C3F700666240 /* Info.plist */,
 				6FB349B825A8C3F700666240 /* Ubuntu.entitlements */,
-				6F2EE07425A99FB300B4E169 /* Authorization.m */,
-				6F2EE07325A99FB300B4E169 /* Ubuntu-Bridging-Header.h */,
-				6F2F8C6325ADE91B004C231D /* ProgressSheetController.swift */,
-				6F03EEB125AE26B5005ABD99 /* MainWindowController.swift */,
 			);
 			path = Ubuntu;
 			sourceTree = "<group>";
@@ -102,6 +135,14 @@
 				6FB349CA25A8ECF800666240 /* vmlinuz-4.4.0-131-generic */,
 			);
 			path = boot;
+			sourceTree = "<group>";
+		};
+		6FD78FBA25B3069900AD4942 /* updates */ = {
+			isa = PBXGroup;
+			children = (
+				6FD78FBB25B306BE00AD4942 /* 00-automount.sh */,
+			);
+			path = updates;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -173,8 +214,10 @@
 			files = (
 				6F155D2C25B064820050A2E8 /* hyperkit in Resources */,
 				6FB349C625A8E4C400666240 /* xhyve in Resources */,
+				6F8FF14125B21C41003DF0A7 /* qemu-img in Resources */,
 				6FB349B325A8C3F700666240 /* Assets.xcassets in Resources */,
 				6FB349CB25A8ECF800666240 /* initrd.img-4.4.0-131-generic in Resources */,
+				6F8FF14525B21C87003DF0A7 /* mkfs in Resources */,
 				6FB349CC25A8ECF800666240 /* vmlinuz-4.4.0-131-generic in Resources */,
 				6FB349B625A8C3F700666240 /* Main.storyboard in Resources */,
 			);
@@ -187,10 +230,13 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6F155D3225B0742E0050A2E8 /* DiskManagerViewController.swift in Sources */,
 				6FB349B125A8C3F500666240 /* ViewController.swift in Sources */,
 				6FB349AF25A8C3F500666240 /* AppDelegate.swift in Sources */,
 				6F2F8C6425ADE91B004C231D /* ProgressSheetController.swift in Sources */,
+				6F155D3625B075900050A2E8 /* AddDiskSheetController.swift in Sources */,
 				6F2EE07525A99FB300B4E169 /* Authorization.m in Sources */,
+				6F8923A025B2263C00D8118F /* DiskTools.swift in Sources */,
 				6F03EEB225AE26B5005ABD99 /* MainWindowController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
