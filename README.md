@@ -1,11 +1,13 @@
 # DSL
 
-Darwin subsytem for Linux. Not actually a subsystem like WSL, but runs an Ubuntu 16 VM on [xhyve](https://github.com/machyve/xhyve) and adds a nice frontend to manage the VM.
+Darwin subsytem for Linux. Not actually a subsystem like WSL, but runs an Ubuntu 16 VM on a hypervisor ([xhyve](https://github.com/machyve/xhyve) or [hyperkit](https://github.com/moby/hyperkit)) and adds a nice frontend to manage the VM.
 Goal is to make running Ubuntu or any flavour of linux as seamless as possible using existing technologies.
 
-## Logging In
-Username: `default`
-Password: `password`
+<p align="center"><img src="https://i.imgur.com/drxHEfv.jpg" width="60%"></p>
+
+## Installation
+
+Head over to ![releases page](https://github.com/sdslabs/DSL/releases) to download the latest version of Ubuntu.dmg and move the App to Applications folder. On the first run, it will make you download a base image, which is 3 Gb in size. You can later make and attach other disks to the VM. Login via SSH using username `default` and password `password`.
 
 ## Licensing
 
